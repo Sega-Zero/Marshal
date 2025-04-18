@@ -15,12 +15,12 @@ import Foundation
 
 
 public protocol MarshaledObject {
-    func any(for key: KeyType) throws -> Any
-    func optionalAny(for key: KeyType) -> Any?
+    func any(for key: KeyType) throws -> any Sendable
+    func optionalAny(for key: KeyType) -> (any Sendable)?
 }
 
 public extension MarshaledObject {
-    func any(for key: KeyType) throws -> Any {
+    func any(for key: KeyType) throws -> any Sendable {
         let pathComponents = key.stringValue.split(separator: ".").map(String.init)
     
         //  Re-combine components ending in backslash…
@@ -45,7 +45,7 @@ public extension MarshaledObject {
             }
         }
     
-        var accumulator: Any = self
+        var accumulator: any Sendable = self
     
         for component in finalComponents {
             if let componentData = accumulator as? Self, let value = componentData.optionalAny(for: component) {
